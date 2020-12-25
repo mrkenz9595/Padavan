@@ -557,6 +557,13 @@ kill_process() {
 		killall microsocks >/dev/null 2>&1
 		kill -9 "$microsocks_process" >/dev/null 2>&1
 	fi
+func_start(){
+	ulimit -n 65536
+	func_gen_ss_json && \
+	func_start_ss_redir && \
+	func_start_ss_rules && \
+	restart_firewall && \
+	loger $ss_bin "start done" || { ss-rules -f && loger $ss_bin "start fail!";}
 }
 
 
