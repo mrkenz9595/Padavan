@@ -6,11 +6,11 @@ CXX=g++ $(CPUFLAGS)
 AR=ar
 RANLIB=ranlib
 
-COPTS=$(CFLAGS) -O3
+COPTS=$(CFLAGS) -ffunction-sections -fdata-sections -I$(DESTDIR)/include
 COPTS+=$(if $(CONFIG_IPV6),-DOPENSSL_USE_IPV6=1,)
 COPTS+=-DOPENSSL_PREFER_CHACHA_OVER_GCM
 
-LOPTS=-Wl,--gc-sections -L$(DESTDIR)/lib
+LOPTS=$(LDFLAGS) -Wl,--gc-sections -L$(DESTDIR)/lib
 
 OPENSSL_OPTIONS = no-capieng no-cms no-rfc3779 no-seed no-async \
                   no-ec2m no-err no-idea no-rc5 no-rmd160 no-blake2 \
