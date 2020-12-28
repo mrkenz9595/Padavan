@@ -1,12 +1,9 @@
 SRC_NAME=openssl-1.1.1
 
 # openssl use CROSS_COMPILE prefix
-CC=gcc $(CPUFLAGS)
-CXX=g++ $(CPUFLAGS)
-AR=ar
-RANLIB=ranlib
+CC=gcc
 
-COPTS=$(CFLAGS) -ffunction-sections -fdata-sections -I$(DESTDIR)/include
+COPTS=$(CPUFLAGS) $(CFLAGS) -ffunction-sections -fdata-sections -I$(DESTDIR)/include
 COPTS+=$(if $(CONFIG_IPV6),-DOPENSSL_USE_IPV6=1,)
 COPTS+=-DOPENSSL_PREFER_CHACHA_OVER_GCM
 
