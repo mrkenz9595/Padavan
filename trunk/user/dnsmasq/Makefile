@@ -19,7 +19,11 @@ clean:
 	rm -f dnsmasq
 
 romfs:
+<<<<<<< HEAD
 	cp $(SRC_NAME)/src/dnsmasq .
 	$(STRIP) dnsmasq
 	$(ROMFSINST) /usr/sbin/dnsmasq
 	$(ROMFSINST) -p +x $(THISDIR)/dnsmasq.sh /usr/bin/dnsmasq.sh
+=======
+	$(ROMFSINST) $(SRC_NAME)/src/dnsmasq /usr/sbin/dnsmasq
+>>>>>>> a57392be7f... dnsmasq: adapt project (#587)
