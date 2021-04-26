@@ -97,6 +97,20 @@ ipset_r() {
 	ipset -! -R <<-EOF || return 1
 		create ss_spec_wan_ac hash:net
 		$(gen_iplist | sed -e "s/^/add ss_spec_wan_ac /")
+ipset_init() {
+	ipset -! restore <<-EOF || return 1
+		create ss_spec_src_ac hash:net hashsize 64
+		create ss_spec_src_bp hash:net hashsize 64
+		create ss_spec_src_fw hash:net hashsize 64
+		create ss_spec_dst_sp hash:net hashsize 64
+		create ss_spec_dst_bp hash:net hashsize 64
+		create ss_spec_dst_fw hash:net hashsize 64
+		$(gen_lan_host_ipset_entry)
+		$(gen_special_purpose_ip | sed -e "s/^/add ss_spec_dst_sp /")
+		$(sed -e "s/^/add ss_spec_dst_bp /" ${WAN_BP_LIST:=/dev/null} 2>/dev/null)
+		$(for ip in $WAN_BP_IP; do echo "add ss_spec_dst_bp $ip"; done)
+		$(sed -e "s/^/add ss_spec_dst_fw /" ${WAN_FW_LIST:=/dev/null} 2>/dev/null)
+		$(for ip in $WAN_FW_IP; do echo "add ss_spec_dst_fw $ip"; done)
 EOF
 	ipset -N china hash:net 2>/dev/null
 	$ipt_n -N SS_SPEC_WAN_AC
@@ -282,6 +296,7 @@ gen_iplist() {
 EOF
 }
 
+<<<<<<< HEAD
 gen_spec_iplist() {
 	cat <<-EOF
 		0.0.0.0/8
@@ -301,6 +316,27 @@ gen_spec_iplist() {
 		240.0.0.0/4
 		255.255.255.255
 		$(get_wan_ip)
+=======
+include_ac_rules() {
+	local protocol=$([ "$1" = "mangle" ] && echo udp || echo tcp)
+	iptables-restore -n <<-EOF
+	*$1
+	:SS_SPEC_LAN_DG - [0:0]
+	:SS_SPEC_LAN_AC - [0:0]
+	:SS_SPEC_WAN_AC - [0:0]
+	:SS_SPEC_WAN_FW - [0:0]
+	-A SS_SPEC_LAN_DG -m set --match-set ss_spec_dst_sp dst -j RETURN
+	-A SS_SPEC_LAN_DG -p $protocol $EXT_ARGS -j SS_SPEC_LAN_AC
+	-A SS_SPEC_LAN_AC -m set --match-set ss_spec_src_fw src -j SS_SPEC_WAN_FW
+	-A SS_SPEC_LAN_AC -m set --match-set ss_spec_src_ac src -j SS_SPEC_WAN_AC
+	-A SS_SPEC_LAN_AC -m set --match-set ss_spec_src_bp src -j RETURN
+	-A SS_SPEC_LAN_AC -j ${LAN_TARGET:=SS_SPEC_WAN_AC}
+	-A SS_SPEC_WAN_AC -m set --match-set ss_spec_dst_fw dst -j SS_SPEC_WAN_FW
+	-A SS_SPEC_WAN_AC -m set --match-set ss_spec_dst_bp dst -j RETURN
+	-A SS_SPEC_WAN_AC -j SS_SPEC_WAN_FW
+	$(gen_prerouting_rules $protocol)
+	COMMIT
+>>>>>>> 82d006d35c... Shadowsocks: simple lan acl (#602)
 EOF
 }
 
