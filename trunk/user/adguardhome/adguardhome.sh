@@ -9,7 +9,7 @@ no-resolv
 server=127.0.0.1#5335
 EOF
 /sbin/restart_dhcpd
-logger -t "AdGuardHome" "添加DNS转发到5335端口"
+logger -t "AdGuardHome" "Add DNS forwarding to port 5335"
 fi
 }
 del_dns() {
@@ -34,7 +34,7 @@ set_iptable()
 		ip6tables -t nat -A PREROUTING -p tcp -d $IP --dport 53 -j REDIRECT --to-ports 5335 >/dev/null 2>&1
 		ip6tables -t nat -A PREROUTING -p udp -d $IP --dport 53 -j REDIRECT --to-ports 5335 >/dev/null 2>&1
 	done
-    logger -t "AdGuardHome" "重定向53端口"
+    logger -t "AdGuardHome" "Redirect port 53"
     fi
 }
 
@@ -65,7 +65,7 @@ bind_host: 0.0.0.0
 bind_port: 3030
 auth_name: admin
 auth_pass: admin
-language: zh-cn
+language: vi
 rlimit_nofile: 0
 dns:
   bind_host: 0.0.0.0
@@ -116,6 +116,10 @@ filters:
   url: https://www.malwaredomainlist.com/hostslist/hosts.txt
   name: MalwareDomainList.com Hosts List
   id: 4
+- enabled: true
+  url: https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts
+  name: Host VN
+  id: 5
 user_rules: []
 dhcp:
   enabled: false
@@ -137,15 +141,15 @@ fi
 }
 
 dl_adg(){
-logger -t "AdGuardHome" "下载AdGuardHome"
+logger -t "AdGuardHome" "Download AdGuardHome"
 #wget --no-check-certificate -O /tmp/AdGuardHome.tar.gz https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.101.0/AdGuardHome_linux_mipsle.tar.gz
-curl -k -s -o /tmp/AdGuardHome/AdGuardHome --connect-timeout 10 --retry 3 https://cdn.jsdelivr.net/gh/chongshengB/rt-n56u/trunk/user/adguardhome/AdGuardHome
+curl -k -s -o /tmp/AdGuardHome/AdGuardHome --connect-timeout 10 --retry 3 https://tduong.000webhostapp.com/duong/AdGuardHome
 if [ ! -f "/tmp/AdGuardHome/AdGuardHome" ]; then
-logger -t "AdGuardHome" "AdGuardHome下载失败，请检查是否能正常访问github!程序将退出。"
+logger -t "AdGuardHome" "AdGuardHome failed to download, please check whether you can access github normally! The program will exit."
 nvram set adg_enable=0
 exit 0
 else
-logger -t "AdGuardHome" "AdGuardHome下载成功。"
+logger -t "AdGuardHome" "AdGuardHome downloaded successfully."
 chmod 777 /tmp/AdGuardHome/AdGuardHome
 fi
 }
@@ -159,7 +163,7 @@ start_adg(){
 	getconfig
 	change_dns
 	set_iptable
-	logger -t "AdGuardHome" "运行AdGuardHome"
+	logger -t "AdGuardHome" "Run AdGuardHome"
 	eval "/tmp/AdGuardHome/AdGuardHome -c $adg_file -w /tmp/AdGuardHome -v" &
 
 }

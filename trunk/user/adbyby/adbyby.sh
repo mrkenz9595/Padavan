@@ -26,9 +26,9 @@ adbyby_start()
 {
 	addscripts
 	if [ ! -f "$PROG_PATH/adbyby" ]; then
-	logger -t "adbyby" "adbyby程序文件不存在，正在解压..."
+	logger -t "adbyby" "adbyby program file does not exist, it is being extract..."
 	tar -xzvf "/etc_ro/adbyby.tar.gz" -C "/tmp"
-	logger -t "adbyby" "成功解压至：$PROG_PATH"
+	logger -t "adbyby" "Extract successs to:$PROG_PATH"
 	fi
 	#if [ $abp_mode -eq 1 ]; then
 	#/tmp/adbyby/adblock.sh &
@@ -42,7 +42,7 @@ adbyby_start()
 	hosts_ads
 	/sbin/restart_dhcpd
 	add_cron
-	logger -t "adbyby" "Adbyby启动完成。"
+	logger -t "adbyby" "Adbyby has started up."
 }
 
 adbyby_close()
@@ -56,13 +56,13 @@ adbyby_close()
 	fi
 	kill -9 $(ps | grep admem.sh | grep -v grep | awk '{print $1}') >/dev/null 2>&1 
 	/sbin/restart_dhcpd
-	logger -t "adbyby" "Adbyby已关闭。"
+	logger -t "adbyby" "Adbyby is closed."
 
 }
 
 add_rules()
 {
-	logger -t "adbyby" "正在检查规则是否需要更新!"
+	logger -t "adbyby" "Checking whether the rules need to be updated!"
 	rm -f /tmp/adbyby/data/*.bak
 
 	touch /tmp/local-md5.json && md5sum /tmp/adbyby/data/lazy.txt /tmp/adbyby/data/video.txt > /tmp/local-md5.json
@@ -75,7 +75,7 @@ add_rules()
 
 	if [ "$lazy_online"x != "$lazy_local"x -o "$video_online"x != "$video_local"x ]; then
 	echo "MD5 not match! Need update!"
-	logger -t "adbyby" "发现更新的规则,下载规则！"
+	logger -t "adbyby" "Discover the updated rules, download the rules!"
 	touch /tmp/lazy.txt && curl -k -s -o /tmp/lazy.txt --connect-timeout 5 --retry 3 https://adbyby.coding.net/p/xwhyc-rules/d/xwhyc-rules/git/raw/master/lazy.txt
 	touch /tmp/video.txt && curl -k -s -o /tmp/video.txt --connect-timeout 5 --retry 3 https://adbyby.coding.net/p/xwhyc-rules/d/xwhyc-rules/git/raw/master/video.txt
 	touch /tmp/local-md5.json && md5sum /tmp/lazy.txt /tmp/video.txt > /tmp/local-md5.json
@@ -89,11 +89,11 @@ add_rules()
 	fi
 	else
 	echo "MD5 match! No need to update!"
-	logger -t "adbyby" "没有更新的规则,本次无需更新！"
+	logger -t "adbyby" "There are no updated rules, no need to update this time!"
 	fi
 
 	rm -f /tmp/lazy.txt /tmp/video.txt /tmp/local-md5.json /tmp/md5.json
-	logger -t "adbyby" "Adbyby规则更新完成"
+	logger -t "adbyby" "Adbyby rule update completed"
 	nvram set adbyby_ltime=`head -1 /tmp/adbyby/data/lazy.txt | awk -F' ' '{print $3,$4}'`
 	nvram set adbyby_vtime=`head -1 /tmp/adbyby/data/video.txt | awk -F' ' '{print $3,$4}'`
 	#nvram set adbyby_rules=`grep -v '^!' /tmp/adbyby/data/rules.txt | wc -l`
@@ -104,7 +104,7 @@ add_rules()
 	grep -v '^!' /etc/storage/adbyby_adblack.sh | grep -v "^$" > $PROG_PATH/adblack.conf
 	grep -v '^!' /etc/storage/adbyby_adesc.sh | grep -v "^$" > $PROG_PATH/adesc.conf
 	grep -v '^!' /etc/storage/adbyby_adhost.sh | grep -v "^$" > $PROG_PATH/adhost.conf
-	logger -t "adbyby" "正在处理规则..."
+	logger -t "adbyby" "Processing rule..."
 	rm -f $DATA_PATH/user.bin
 	rm -f $DATA_PATH/user.txt
 	rulesnum=`nvram get adbybyrules_staticnum_x`
@@ -115,7 +115,7 @@ add_rules()
 		rules_address=`nvram get adbybyrules_x$j`
 		rules_road=`nvram get adbybyrules_road_x$j`
 		if [ $rules_road -ne 0 ]; then
-			logger -t "adbyby" "正在下载和合并第三方规则"
+			logger -t "adbyby" "Downloading and merging third-party rules"
 			curl -k -s -o /tmp/adbyby/user2.txt --connect-timeout 5 --retry 3 $rules_address
 			grep -v '^!' /tmp/adbyby/user2.txt | grep -E '^(@@\||\||[[:alnum:]])' | sort -u | grep -v "^$" >> $DATA_PATH/user3adblocks.txt
 			rm -f /tmp/adbyby/user2.txt
@@ -136,7 +136,7 @@ add_cron()
 	cat >> /etc/storage/cron/crontabs/$http_username << EOF
 $adbyby_update_min $adbyby_update_hour * * * /bin/sh /usr/bin/adbyby.sh G >/dev/null 2>&1
 EOF
-	logger -t "adbyby" "设置每天$adbyby_update_hour时$adbyby_update_min分，自动更新规则！"
+	logger -t "adbyby" "Set daily $adbyby_update_hour:$adbyby_update_min, auto update the rules!"
 	fi
 if [ $adbyby_update -eq 1 ]; then
 
@@ -144,7 +144,7 @@ if [ $adbyby_update -eq 1 ]; then
 	cat >> /etc/storage/cron/crontabs/$http_username << EOF
 */$adbyby_update_min */$adbyby_update_hour * * * /bin/sh /usr/bin/adbyby.sh G >/dev/null 2>&1
 EOF
-	logger -t "adbyby" "设置每隔$adbyby_update_hour时$adbyby_update_min分，自动更新规则！"
+	logger -t "adbyby" "Set every $adbyby_update_hour:$adbyby_update_min，auto update the rules!"
 	fi
 	if [ $adbyby_update -eq 2 ]; then
 	sed -i '/adbyby/d' /etc/storage/cron/crontabs/$http_username
@@ -164,7 +164,7 @@ ip_rule()
 	num=`nvram get adbybyip_staticnum_x`
 	if [ $adbyby_ip_x -eq 1 ]; then
 	if [ $num -ne 0 ]; then
-	logger -t "adbyby" "设置内网IP过滤控制"
+	logger -t "adbyby" "Set the internal network IP filtering control"
 	for i in $(seq 1 $num)
 	do
 		j=`expr $i - 1`
@@ -173,18 +173,18 @@ ip_rule()
 		case $mode in
 		0)
 			$ipt_n -A ADBYBY -s $ip -j RETURN
-			logger -t "adbyby" "忽略$ip走AD过滤。"
+			logger -t "adbyby" "Ignore $ip take AD filter."
 			;;
 		1)
 			$ipt_n -A ADBYBY -s $ip -p tcp -j REDIRECT --to-ports 8118
 			$ipt_n -A ADBYBY -s $ip -j RETURN
-			logger -t "adbyby" "设置$ip走全局过滤。"
+			logger -t "adbyby" "Set up $ip take global filter."
 			;;
 		2)
 			ipset -N adbyby_wan hash:ip
 			$ipt_n -A ADBYBY -m set --match-set adbyby_wan dst -s $ip -p tcp -j REDIRECT --to-ports 8118
 			awk '!/^$/&&!/^#/{printf("ipset=/%s/'"adbyby_wan"'\n",$0)}' $PROG_PATH/adhost.conf > $WAN_FILE
-			logger -t "adbyby" "设置$ip走Plus+过滤。"
+			logger -t "adbyby" "Set up $ip to take the Plus+ filter."
 			;;
 		esac
 	done
@@ -269,13 +269,13 @@ add_rule()
 	$ipt_n -A ADBYBY -d 224.0.0.0/4 -j RETURN
 	$ipt_n -A ADBYBY -d 240.0.0.0/4 -j RETURN
 	ip_rule
-	logger -t "adbyby" "添加8118透明代理端口。"
+	logger -t "adbyby" "Add 8118 transparent proxy port."
 	$ipt_n -I PREROUTING -p tcp --dport 80 -j ADBYBY
 	iptables-save | grep -E "ADBYBY|^\*|^COMMIT" | sed -e "s/^-A \(OUTPUT\|PREROUTING\)/-I \1 1/" > /tmp/adbyby.save
 	if [ -f "/tmp/adbyby.save" ]; then
-	logger -t "adbyby" "保存adbyby防火墙规则成功！"
+	logger -t "adbyby" "Save the adbyby firewall rules success!"
 	else
-	logger -t "adbyby" "保存adbyby防火墙规则失败！可能会造成重启后过滤广告失效，需要手动关闭再打开ADBYBY！"
+	logger -t "adbyby" "Failed to save adbyby firewall rules! It may cause the filter of advertisements to fail after restart, you need to manual close and open ADBYBY!"
 	fi
 }
 
@@ -292,7 +292,7 @@ del_rule()
 	ipset -X adbyby_wan 2>/dev/null
 	ipset -F blockip 2>/dev/null
 	ipset -X blockip 2>/dev/null
-	logger -t "adbyby" "已关闭全部8118透明代理端口。"
+	logger -t "adbyby" "All 8118 transparent proxy ports have been closed."
 }
 
 reload_rule()
@@ -309,9 +309,9 @@ adbyby_uprules()
 	adbyby_close
 	addscripts
 	if [ ! -f "$PROG_PATH/adbyby" ]; then
-	logger -t "adbyby" "adbyby程序文件不存在，正在解压..."
+	logger -t "adbyby" "adbyby program file does not exist, it is being extract..."
 	tar -xzvf "/etc_ro/adbyby.tar.gz" -C "/tmp"
-	logger -t "adbyby" "成功解压至：$PROG_PATH"
+	logger -t "adbyby" "Extract success to:$PROG_PATH"
 	fi
 	#if [ $abp_mode -eq 1 ]; then
 	#/tmp/adbyby/adblock.sh &
@@ -338,9 +338,9 @@ nvram set anti_ad_count=0
 if [ "$anti_ad" = "1" ]; then
 curl -k -s -o /etc/storage/dnsmasq-adbyby.d/anti-ad-for-dnsmasq.conf --connect-timeout 5 --retry 3 $anti_ad_link
 if [ ! -f "/etc/storage/dnsmasq-adbyby.d/anti-ad-for-dnsmasq.conf" ]; then
-	logger -t "adbyby" "anti_AD下载失败！"
+	logger -t "adbyby" "anti_AD download failed!"
 else
-	logger -t "adbyby" "anti_AD下载成功,处理中..."
+	logger -t "adbyby" "anti_AD download success, processing..."
 nvram set anti_ad_count=`grep -v '^#' /etc/storage/dnsmasq-adbyby.d/anti-ad-for-dnsmasq.conf | wc -l`
 fi
 fi
@@ -354,17 +354,17 @@ rm -rf $PROG_PATH/hosts
 grep -v '^#' /etc/storage/adbyby_host.sh | grep -v "^$" > $PROG_PATH/hostlist.txt
 for ip in `cat $PROG_PATH/hostlist.txt`
 do
-logger -t "adbyby" "正在下载: $ip"
+logger -t "adbyby" "Downloading: $ip"
 curl -k -s -o /tmp/host.txt --connect-timeout 5 --retry 3 $ip
 if [ ! -f "/tmp/host.txt" ]; then
-	logger -t "adbyby" "$ip 下载失败！"
+	logger -t "adbyby" "$ip Download failed!"
 else
-	logger -t "adbyby" "hosts下载成功,处理中..."
+	logger -t "adbyby" "Download hosts success, processing..."
 grep -v '^#' /tmp/host.txt | grep -v "^$" >> $PROG_PATH/hosts
 fi
 done
 rm -f /tmp/host.txt
-logger -t "adbyby" "正在对hosts文件进行去重处理."
+logger -t "adbyby" "Hosts file is being deduplication."
 sort $PROG_PATH/hosts | uniq
 nvram set adbyby_hostsad=`grep -v '^!' $PROG_PATH/hosts | wc -l`
 sed -i '/hosts/d' /etc/storage/dnsmasq/dnsmasq.conf
@@ -552,3 +552,4 @@ G)
 	echo "check"
 	;;
 esac
+
