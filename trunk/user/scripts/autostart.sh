@@ -1,16 +1,16 @@
 #!/bin/sh
 #nvram set ntp_ready=0
 if [ $(nvram get sdns_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动SmartDns"
+logger -t "Auto start" "Start SmartDns"
 /usr/bin/smartdns.sh start
 fi
 
 if [ $(nvram get caddy_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动文件管理"
+logger -t "Auto start" "Starting file management"
 /usr/bin/caddy.sh start
 fi
 
-logger -t "自动启动" "正在检查路由是否已连接互联网！"
+logger -t "Auto start" "Checking whether the router is connected to the Internet!"
 count=0
 while :
 do
@@ -39,36 +39,36 @@ do
 done
 
 if [ $(nvram get adbyby_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动adbyby plus+"
+logger -t "Auto start" "Start adbyby plus+"
 /usr/bin/adbyby.sh start
 fi
 
 if [ $(nvram get koolproxy_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动koolproxy"
+logger -t "Auto start" "Start koolproxy"
 /usr/bin/koolproxy.sh start
 fi
 
 if [ $(nvram get aliddns_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动阿里ddns"
+logger -t "Auto start" "Start Aliddns"
 /usr/bin/aliddns.sh start
 fi
 
 if [ $(nvram get ss_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动科学上网"
+logger -t "Auto start" "Start Shadowsock"
 /usr/bin/shadowsocks.sh start
 fi
 
 if [ $(nvram get adg_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动adguardhome"
+logger -t "Auto start" "Start adguardhome"
 /usr/bin/adguardhome.sh start
 fi
 
 if [ $(nvram get wyy_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动音乐解锁"
+logger -t "Auto start" "Start music unlock"
 /usr/bin/unblockmusic.sh start
 fi
 
 if [ $(nvram get zerotier_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动zerotier"
+logger -t "Auto start" "Start zerotier"
 /usr/bin/zerotier.sh start
 fi

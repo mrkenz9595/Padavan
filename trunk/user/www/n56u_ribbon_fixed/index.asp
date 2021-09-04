@@ -61,8 +61,8 @@ function detect_update_info(){
 }
 
 function show_default_icon(){
-	var icon_name = "iconClient";
-	$("statusframe").src = "/device-map/clients.asp";
+	var icon_name = "iconInternet";
+	$("statusframe").src = "/device-map/internet.asp";
 	clickEvent($(icon_name));
 }
 
