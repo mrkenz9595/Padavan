@@ -31,7 +31,7 @@ jobs:
           - build_variant: "mt7628"
             targets: "MI-NANO MI-3C"
           - build_variant: "mt7621"
-            targets: "MI-4 MI-4A RM2100"
+            targets: "MI-4 MI-R4A RM2100"
           - build_variant: "mt7621-usb"
             targets: "MI-R3G NEWIFI3 B70 TD-AC101"
     steps:
