@@ -116,6 +116,8 @@ Contributors of this project are not responsible for what happens next.
 >- R6220
 >- NETGEAR-CHJ (R6260, R6350, R6850, WAC124)
 >- NETGEAR-BZV (R6800, R6700-v2, R7200, Nighthawk AC2400)
+>- ZBT-WE826 T2 (USB+PCIE LTE)
+>- TD-AC101 (USB+PCIE LTE)
 
 ***
 
