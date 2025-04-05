@@ -20,7 +20,7 @@ jobs:
         run: |
           cd toolchain-mipsel
           ./build_toolchain
-          cd toolchain-mipsel/toolchain-3.4.x
+          cd toolchain-3.4.x
           tar cJf ../mipsel-linux-uclibc-gcc10.tar.xz *
       - uses: actions/upload-artifact@v4
         with:
