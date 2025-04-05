@@ -35,7 +35,7 @@ jobs:
           - build_variant: "mt7621-usb"
             targets: "MI-R3G NEWIFI3 B70 TD-AC101"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Prepare environment
         run: |
           sudo apt update
