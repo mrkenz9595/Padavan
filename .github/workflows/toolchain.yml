@@ -19,7 +19,7 @@ jobs:
       - name: Start Build
         run: |
           ./build_toolchain.sh
-          cd toolchain-mipsel/toolchain
+          cd toolchain-mipsel/toolchain-3.4.x
           tar cJf ../mipsel-linux-uclibc-gcc10.tar.xz *
       - uses: actions/upload-artifact@v4
         with:
